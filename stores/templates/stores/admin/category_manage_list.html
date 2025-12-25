@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}
+จัดการหมวดหมู่
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-4xl font-bold text-gray-800">จัดการหมวดหมู่</h1>
+        <div class="flex gap-3"> <a href="{% url 'dashboard' %}"
+                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                กลับ Dashboard
+            </a>
+
+            <a href="{% url 'product-manage-list' %}"
+                class="bg-yellow-400 text-gray-800 font-semibold py-2 px-4 rounded shadow hover:bg-yellow-500 transition duration-200">
+                กลับหน้าจัดการสินค้า
+            </a>
+
+            <a href="{% url 'category-add' %}"
+                class="bg-yellow-400 text-gray-800 font-semibold py-2 px-4 rounded shadow hover:bg-yellow-500 transition duration-200">
+                + เพิ่มหมวดหมู่ใหม่
+            </a>
+
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <table class="w-full min-w-full">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="py-3 px-6 text-left">ID</th>
+                    <th class="py-3 px-6 text-left">ชื่อหมวดหมู่</th>
+                    <th class="py-3 px-6 text-left hidden md:table-cell">สร้างโดย</th>
+                    <th class="py-3 px-6 text-left hidden md:table-cell">เวลาสร้าง</th>
+                    <th class="py-3 px-6 text-left hidden md:table-cell">แก้ไขล่าสุดโดย</th>
+                    <th class="py-3 px-6 text-left hidden md:table-cell">เวลาแก้ไขล่าสุด</th>
+                    <th class="py-3 px-6 text-right">จัดการ</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-700">
+                {% for category in categories %}
+                <tr class="border-b border-gray-200 hover:bg-gray-100">
+
+                    <td class="py-4 px-6">{{ category.id }}</td>
+                    <td class="py-4 px-6 font-medium">{{ category.name }}</td>
+                    <td class="py-4 px-6 hidden md:table-cell">{{ category.created_by.username|default:"-" }}</td>
+                    <td class="py-4 px-6 hidden md:table-cell">{{ category.created_at|date:"d/m/Y H:i" }}</td>
+                    <td class="py-4 px-6 hidden md:table-cell">{{ category.updated_by.username|default:"-" }}</td>
+                    <td class="py-4 px-6 hidden md:table-cell">{{ category.updated_at|date:"d/m/Y H:i" }}</td>
+
+                    <td class="py-4 px-6 text-right whitespace-nowrap">
+                        <a href="{% url 'category-edit' category.pk %}"
+                            class="bg-blue-500 text-white font-semibold py-1 px-3 rounded text-sm shadow hover:bg-blue-600 transition duration-200">
+                            แก้ไข
+                        </a>
+
+                        <form action="{% url 'category-delete' category.pk %}" method="POST" class="inline-block ml-2">
+                            {% csrf_token %}
+                            <button type="submit"
+                                class="bg-red-500 text-white font-semibold py-1 px-3 rounded text-sm shadow hover:bg-red-600 transition duration-200"
+                                onclick="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบหมวดหมู่ {{ category.name|escapejs }}?\n(การลบหมวดหมู่จะไม่ลบสินค้าที่อยู่ในหมวดนี้)');">
+                                ลบ
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="py-6 px-6 text-center text-gray-500">
+                        ยังไม่มีหมวดหมู่ในระบบ
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

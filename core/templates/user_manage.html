@@ -1,0 +1,84 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mx-auto p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">จัดการบัญชีผู้ใช้</h1>
+        <a href="{% url 'dashboard' %}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+            กลับ Dashboard
+        </a>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div
+        class="p-4 mb-4 text-white rounded {% if message.tags == 'error' %}bg-red-500{% else %}bg-green-500{% endif %}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="bg-white shadow-md rounded my-6 overflow-x-auto">
+        <table class="min-w-full table-auto">
+            <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                <tr>
+                    <th class="py-3 px-6 text-left">ชื่อผู้ใช้ / Email</th>
+                    <th class="py-3 px-6 text-left">ชื่อ-นามสกุล</th>
+                    <th class="py-3 px-6 text-center">สถานะ</th>
+                    <th class="py-3 px-6 text-center">จัดการ</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm font-light">
+                {% for user in users %}
+                <tr class="border-b border-gray-200 hover:bg-gray-100">
+
+                    <td class="py-3 px-6 text-left whitespace-nowrap">
+                        <div class="flex items-center">
+                            <span class="font-medium">
+                                {% if user.username %}
+                                {{ user.username }}
+                                {% else %}
+                                {{ user.email }}
+                                {% endif %}
+                            </span>
+                        </div>
+                    </td>
+
+                    <td class="py-3 px-6 text-left">
+                        {{ user.first_name }} {{ user.last_name }}
+                    </td>
+
+                    <td class="py-3 px-6 text-center">
+                        {% if user.is_active %}
+                        <span class="bg-green-200 text-green-600 py-1 px-3 rounded-full text-xs">Active</span>
+                        {% else %}
+                        <span class="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">Banned</span>
+                        {% endif %}
+                    </td>
+
+                    <td class="py-3 px-6 text-center">
+                        <div class="flex item-center justify-center space-x-2">
+                            {% if not user.is_superuser %}
+                            <a href="{% url 'toggle_user_status' user.id %}">
+                                {% if user.is_active %}
+                                <button
+                                    class="bg-yellow-500 text-white px-2 py-1 rounded text-xs hover:bg-yellow-600">ระงับ</button>
+                                {% else %}
+                                <button
+                                    class="bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600">ปลดแบน</button>
+                                {% endif %}
+                            </a>
+                            <a href="{% url 'delete_user' user.id %}" onclick="return confirm('ยืนยันการลบ?');">
+                                <button
+                                    class="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">ลบ</button>
+                            </a>
+                            {% else %}
+                            <span class="text-gray-400 text-xs">Admin</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

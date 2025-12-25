@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load humanize %} {% block title %}
+จัดการหลังบ้าน (Admin)
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold text-gray-800">จัดการหลังบ้าน (Admin)</h1>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"> <a href="{% url 'product-manage-list' %}"
+            class="block p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2"> จัดการสินค้า</h2>
+            <p class="text-gray-600">ดูรายการ แก้ไข หรือลบสินค้าทั้งหมด</p>
+        </a>
+
+        <a href="{% url 'admin-order-list' %}"
+            class="block p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2"> คำสั่งซื้อสินค้าทั่วไป</h2>
+            <p class="text-gray-600">ดูรายการคำสั่งซื้อ อัปเดตสถานะ</p>
+        </a>
+
+        <a href="{% url 'orderframings_manager' %}"
+            class="block p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2"> ออเดอร์สั่งทำกรอบรูป</h2>
+            <p class="text-gray-600">จัดการคำสั่งซื้อกรอบรูป</p>
+        </a>
+
+        <a href="{% url 'orderplaques_manager' %}"
+            class="block p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2"> ออเดอร์สั่งป้ายหินอ่อน</h2>
+            <p class="text-gray-600">จัดการคำสั่งซื้อป้ายหินอ่อน</p>
+        </a>
+
+        <a href="{% url 'user_manage' %}"
+            class="block p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2"> จัดการผู้ใช้งาน</h2>
+            <p class="text-gray-600">จัดการสมาชิกและ สิทธิ์ผู้ใช้</p>
+        </a>
+
+        <a href="{% url 'admin_calendar' %}"
+            class="block p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition duration-300">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2"> จัดการตารางคิวงาน</h2>
+            <p class="text-gray-600">ดูปฏิทินงาน ลงตารางงาน</p>
+        </a>
+    </div>
+
+    <div class="border-t pt-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+            รายงานยอดขาย
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div
+                class="col-span-1 md:col-span-2 bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-green-100 text-sm font-medium uppercase mb-1">รายได้รวมทั้งหมด</p>
+                        <p class="text-4xl font-bold">฿{{ grand_total|intcomma }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="text-xl font-semibold text-gray-700 mb-4">ยอดขายแยกตามประเภทบริการ</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <div class="bg-white rounded-lg shadow p-5 border border-gray-100">
+                <div class="flex items-center mb-2">
+                    <span class="text-2xl mr-2"></span>
+                    <h4 class="font-bold text-gray-700">สินค้าทั่วไป</h4>
+                </div>
+                <p class="text-2xl font-bold text-gray-800">฿{{ sales_general|intcomma }}</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-5 border border-gray-100">
+                <div class="flex items-center mb-2">
+                    <span class="text-2xl mr-2"></span>
+                    <h4 class="font-bold text-gray-700">กรอบรูปสั่งทำ</h4>
+                </div>
+                <p class="text-2xl font-bold text-gray-800">฿{{ sales_framing|intcomma }}</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-5 border border-gray-100">
+                <div class="flex items-center mb-2">
+                    <span class="text-2xl mr-2"></span>
+                    <h4 class="font-bold text-gray-700">ป้ายหินอ่อน</h4>
+                </div>
+                <p class="text-2xl font-bold text-gray-800">฿{{ sales_plaque|intcomma }}</p>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

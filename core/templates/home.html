@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+หน้าแรก
+{% endblock %}
+
+{% block content %}
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<style>
+    .fc-event-title {
+        white-space: normal !important;
+        overflow: visible !important;
+    }
+
+    .fc-daygrid-event {
+        white-space: normal !important;
+        height: auto !important;
+    }
+</style>
+<div class="text-center">
+    <h1 class="text-5xl font-extrabold text-gray-800 mb-4">
+        ยินดีต้อนรับสู่ร้าน วายุ สตูดิโอ
+    </h1>
+    <div class="mt-12 p-8 bg-white rounded-lg shadow-lg max-w-5xl mx-auto">
+        <h2 class="text-2xl font-bold text-gray-700 text-center">ตัวอย่างสินค้าแนะนำของเรา</h2>
+        <p class="text-gray-500 text-center mt-2">กรอบพระ • กรอบรูป • ป้ายหินอ่อน</p>
+
+        <div class="space-y-12 mt-10">
+
+            <!-- กรอบพระ -->
+            <div class="rounded-lg shadow-md p-4 border hover:shadow-xl transition">
+                <h3 class="text-xl font-semibold mb-4 text-center">กรอบพระ</h3>
+
+                <div class="flex flex-wrap justify-center gap-5">
+                    <img src="{% static 'images/frame_pra1.jpg' %}" class="w-80 h-80 object-contain rounded-lg shadow">
+                    <img src="{% static 'images/frame_pra2.jpg' %}" class="w-80 h-80 object-contain rounded-lg shadow">
+                </div>
+            </div>
+
+            <!-- กรอบรูป -->
+            <div class="rounded-lg shadow-md p-4 border hover:shadow-xl transition">
+                <h3 class="text-xl font-semibold mb-4 text-center">กรอบรูป</h3>
+                <div class="flex flex-wrap justify-center gap-5">
+                    <img src="{% static 'images/frame_art1.jpg' %}" class="w-80 h-80 object-contain rounded-lg shadow">
+                    <img src="{% static 'images/frame_art2.jpg' %}" class="w-80 h-80 object-contain rounded-lg shadow">
+                </div>
+            </div>
+
+            <!-- ป้ายหินอ่อน -->
+            <div class="rounded-lg shadow-md p-4 border hover:shadow-xl transition">
+                <h3 class="text-xl font-semibold mb-4 text-center">ป้ายหินอ่อน</h3>
+
+                <div class="flex flex-wrap justify-center gap-5">
+                    <img src="{% static 'images/frame_plaque.jpg' %}"
+                        class="w-80 h-80 object-contain rounded-lg shadow">
+                </div>
+            </div>
+
+        </div>
+        <div class="mt-12 max-w-5xl mx-auto px-4">
+            <div class="bg-white rounded-lg shadow-lg p-8 border-t-4 border-yellow-400">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2"> ตารางคิวงานร้าน Wayu Studio</h2>
+                <div id='home-calendar' class="font-sans text-left"></div>
+            </div>
+        </div>
+        <div class="mt-12 max-w-5xl mx-auto px-4 pb-16">
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden border-t-4 border-gray-800">
+                <div class="p-6 border-b">
+                    <h2 class="text-3xl font-bold text-gray-800">ติดต่อเรา</h2>
+                    <p class="text-gray-500 mt-1">แวะมาชมสินค้าจริง หรือสอบถามเส้นทางได้เลยครับ</p>
+                </div>
+
+                <div class="p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                        <div class="text-left space-y-6">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800 border-l-4 border-yellow-400 pl-3">
+                                    ร้าน วายุสตูดิโอ (Wayu Studio)
+                                </h3>
+                                <p class="text-gray-600 mt-2 ml-4">
+                                    รับทำกรอบรูป กรอบพระ งานแกะสลักป้ายหินอ่อนคุณภาพ
+                                </p>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-2xl"></span>
+                                    <div>
+                                        <p class="font-bold text-gray-800">ที่อยู่ร้าน:</p>
+                                        <p class="text-gray-600">
+                                            213 หมู่ 11 ตำบล หนองสโน <br>
+                                            อำเภอบุณฑริก จังหวัดอุบลราชธานี 34230
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl"></span>
+                                    <div>
+                                        <p class="font-bold text-gray-800">เบอร์โทรศัพท์:</p>
+                                        <p class="text-gray-600">093-396-7859</p>
+                                        <p class="text-gray-600">085-757-9107</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl"></span>
+                                    <div>
+                                        <p class="font-bold text-gray-800">เวลาทำการ:</p>
+                                        <p class="text-gray-600">เปิดทุกวัน 08:00 - 17:00 น.</p>
+                                    </div>
+                                </div>
+                                <div class="pt-4 flex gap-3">
+                                    <a href="#"
+                                        class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg text-center shadow transition flex items-center justify-center gap-2">
+                                        Line
+                                    </a>
+                                    <a href="https://www.facebook.com/wayustudiophoto"
+                                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-center shadow transition flex items-center justify-center gap-2">
+                                        Facebook
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="h-80 bg-gray-200 rounded-lg overflow-hidden shadow-inner border border-gray-300 relative">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1257.0371338380382!2d105.29986519262339!3d14.82423914482578!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31141690bb6e2913%3A0x83567964937efb38!2z4Lin4Liy4Lii4Li44Liq4LiV4Li54LiU4Li04LmC4Lit!5e1!3m2!1sth!2sth!4v1766141482453!5m2!1sth!2sth"
+                                width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            <div
+                                class="absolute bottom-2 left-2 bg-white px-3 py-1 rounded shadow text-xs text-gray-500">
+                                *ร้าน วายุสตูดิโอ*
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('home-calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'th',
+                events: '/api/calendar-events/', // ดึงข้อมูลเดียวกันกับหลังบ้าน
+                headerToolbar: {
+                    left: 'prev,next',
+                    center: 'title',
+                    right: 'today'
+                },
+                height: 600, // กำหนดความสูง
+                eventColor: '#EAB308', // สีเหลืองทอง theme ร้าน
+                eventTextColor: '#000000'
+            });
+            calendar.render();
+        });
+    </script>
+
+    {% endblock %}

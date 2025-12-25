@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %} {% block title %}
+ยืนยันคำสั่งซื้อ (ตะกร้าสินค้า)
+{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10 p-6 bg-white shadow-xl rounded-xl">
+
+    <h2 class="text-2xl font-bold mb-8 text-gray-800 border-b pb-4">
+        🛍️ ยืนยันคำสั่งซื้อ (รายการในตะกร้า)
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+
+        <div class="space-y-6">
+            <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                <h3 class="text-lg font-bold text-gray-700 mb-4">1. สรุปรายการสินค้า</h3>
+
+                <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                    {% for item in cart_items %}
+                    <div class="flex bg-white p-3 rounded border shadow-sm items-center">
+                        <div class="w-16 h-16 flex-shrink-0 border rounded bg-gray-100 flex items-center justify-center overflow-hidden">
+                            {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" class="object-cover w-full h-full">
+                            {% else %}
+                                <span class="text-xs text-gray-400">No Img</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="ml-4 flex-1">
+                            <h4 class="font-semibold text-gray-800 text-sm">{{ item.product.name }}</h4>
+                            <p class="text-xs text-gray-500 line-clamp-1">{{ item.product.description|truncatechars:50 }}</p>
+                            <div class="flex justify-between items-center mt-1">
+                                <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">
+                                    x {{ item.quantity }} ชิ้น
+                                </span>
+                                <span class="font-bold text-gray-700 text-sm">{{ item.total_price|floatformat:2 }} ฿</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-center text-gray-400 py-4">ไม่มีสินค้าในตะกร้า</p>
+                    {% endfor %}
+                </div>
+
+                <div class="mt-6 border-t pt-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-600">ยอดรวมสินค้า:</span>
+                        <span class="font-bold text-gray-800">{{ total_price|floatformat:2 }} บาท</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-600">ค่าจัดส่ง:</span>
+                        <span class="font-bold text-indigo-600" id="shipping-display">0 บาท</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center pt-3 mt-2 border-t border-dashed border-gray-300">
+                        <span class="font-bold text-lg text-gray-800">ยอดชำระสุทธิ:</span>
+                        <span class="font-bold text-2xl text-green-600">
+                            <span id="final-price-display">{{ total_price|floatformat:0 }}</span> บาท
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold text-gray-700 mb-4">2. เลือกวิธีการรับสินค้า</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center justify-between p-4 border rounded-lg cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition bg-white has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50">
+                            <div class="flex items-center">
+                                <input type="radio" name="shipping_method" value="pickup" checked class="h-5 w-5 text-indigo-600">
+                                <div class="ml-3"><span class="font-medium block">รับสินค้าเองที่ร้าน</span></div>
+                            </div>
+                            <span class="text-green-600 font-bold">ฟรี</span>
+                        </label>
+
+                        <label class="flex items-center justify-between p-4 border rounded-lg cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition bg-white has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50">
+                            <div class="flex items-center">
+                                <input type="radio" name="shipping_method" value="standard" class="h-5 w-5 text-indigo-600">
+                                <span class="ml-3 font-medium">ขนส่งธรรมดา (Standard)</span>
+                            </div>
+                            <span class="text-gray-600 font-bold">+50 ฿</span>
+                        </label>
+
+                        <label class="flex items-center justify-between p-4 border rounded-lg cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition bg-white has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50">
+                            <div class="flex items-center">
+                                <input type="radio" name="shipping_method" value="express" class="h-5 w-5 text-indigo-600">
+                                <span class="ml-3 font-medium">ส่งด่วนพิเศษ (Express)</span>
+                            </div>
+                            <span class="text-gray-600 font-bold">+100 ฿</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold text-gray-700 mb-4">3. ชำระเงิน & หลักฐาน</h3>
+
+                    <div class="mb-3">
+                        <label class="flex items-center p-4 border rounded-t-lg bg-blue-50 border-blue-200 cursor-default">
+                            <input type="radio" name="payment_method" value="transfer" checked class="h-5 w-5 text-indigo-600">
+                            <span class="ml-3 font-bold text-blue-900">โอนเงินผ่านธนาคาร</span>
+                        </label>
+
+                        <div class="p-5 bg-white border-x border-b rounded-b-lg text-sm shadow-sm">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 mr-3 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow">K</div>
+                                <div>
+                                    <p class="font-bold text-gray-800 text-lg">ธนาคารกสิกรไทย</p>
+                                    <p class="text-gray-600">เลขบัญชี: <span class="font-mono font-bold text-black text-lg">123-4-56789-0</span></p>
+                                    <p class="text-gray-600">ชื่อบัญชี: ร้านวายุสตูดิโอ</p>
+                                </div>
+                            </div>
+
+                            <hr class="border-gray-200 my-4">
+
+                            <div class="mb-2">
+                                <label class="block mb-2 font-bold text-gray-700">แนบสลิปโอนเงิน: <span class="text-red-500">*</span></label>
+                                <div class="flex items-center justify-center w-full">
+                                    <label for="slip-upload" class="flex flex-col items-center justify-center w-full h-40 border-2 border-indigo-300 border-dashed rounded-lg cursor-pointer bg-indigo-50 hover:bg-indigo-100 transition duration-300 relative overflow-hidden group">
+                                        <div id="upload-placeholder" class="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <svg class="w-8 h-8 mb-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                            <p class="mb-2 text-sm text-indigo-700 font-semibold">คลิกเพื่ออัปโหลดสลิป</p>
+                                        </div>
+                                        <img id="image-preview" src="#" class="hidden absolute inset-0 w-full h-full object-contain p-2 bg-white/80" />
+                                        <input id="slip-upload" name="payment_slip" type="file" class="hidden" accept="image/*" required onchange="previewImage(this)" />
+                                    </label>
+                                </div>
+                                <p id="file-name" class="mt-2 text-xs text-center text-gray-500 min-h-[1.2em]"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-lg text-lg shadow-lg transition transform hover:scale-[1.02] mt-4">
+                    ✅ ยืนยันการสั่งซื้อ
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- ส่วนคำนวณราคาสำหรับตะกร้า ---
+        // รับค่าราคารวมสินค้าจาก Django view โดยตรง
+        const rawCartTotal = "{{ total_price|default:0|floatformat:0 }}"; 
+        const cartTotal = parseInt(rawCartTotal.replace(/,/g, ''));
+        
+        const priceDisplay = document.getElementById('final-price-display');
+        const shippingDisplay = document.getElementById('shipping-display');
+        const shippingRadios = document.querySelectorAll('input[name="shipping_method"]');
+
+        function calculateTotal() {
+            let shippingCost = 0;
+            
+            // หาค่าขนส่งที่เลือก
+            shippingRadios.forEach(radio => {
+                if (radio.checked) {
+                    if (radio.value === 'standard') shippingCost = 50;
+                    else if (radio.value === 'express') shippingCost = 100;
+                    else shippingCost = 0; // pickup
+                }
+            });
+
+            // อัปเดตการแสดงผลค่าขนส่ง
+            shippingDisplay.innerText = shippingCost > 0 ? `+${shippingCost} บาท` : 'ฟรี';
+
+            // คำนวณยอดรวมสุทธิ
+            const grandTotal = cartTotal + shippingCost;
+            priceDisplay.innerText = grandTotal.toLocaleString();
+        }
+
+        // ฟังเหตุการณ์เมื่อเปลี่ยน radio ขนส่ง
+        shippingRadios.forEach(radio => { radio.addEventListener('change', calculateTotal); });
+        
+        // รันครั้งแรก
+        calculateTotal();
+    });
+
+    // --- ส่วนแสดงตัวอย่างรูปสลิป ---
+    function previewImage(input) {
+        const preview = document.getElementById('image-preview');
+        const placeholder = document.getElementById('upload-placeholder');
+        const fileNameDisplay = document.getElementById('file-name');
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+            fileNameDisplay.innerText = "ไฟล์ที่เลือก: " + input.files[0].name;
+            fileNameDisplay.classList.add('text-green-600');
+        } else {
+            preview.src = "#";
+            preview.classList.add('hidden');
+            placeholder.classList.remove('hidden');
+            fileNameDisplay.innerText = "";
+        }
+    }
+</script>
+{% endblock %}

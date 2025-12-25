@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}จัดการตารางคิวงาน{% endblock %}
+
+{% block content %}
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900"> จัดการตารางคิวงาน</h1>
+        <a href="{% url 'dashboard' %}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">กลับ Dashboard</a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-lg shadow-md h-fit">
+            <h2 class="text-lg font-bold mb-4 text-blue-600"> เพิ่มคิวงานใหม่</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">วันที่</label>
+                    <input type="date" name="date" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700">รายละเอียดงาน</label>
+                    <input type="text" name="title" required placeholder="เช่น ติดงานถ่ายรูป..." class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">บันทึกคิวงาน</button>
+            </form>
+            
+            <div class="mt-6 text-sm text-gray-500 bg-yellow-50 p-3 rounded border border-yellow-200">
+                 <b>วิธีแก้ไข/ลบ:</b> คลิกที่แถบ list ในปฏิทินทางขวามือ เพื่อแก้ไขรายละเอียด
+            </div>
+        </div>
+
+        <div class="lg:col-span-3 bg-white p-6 rounded-lg shadow-md">
+            <div id='calendar'></div>
+        </div>
+    </div>
+</div>
+
+<div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full flex items-center justify-center z-50">
+    <div class="relative bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+        <h3 class="text-xl font-bold mb-4 text-gray-800">✏️ แก้ไขคิวงาน</h3>
+        
+        <form id="editForm" method="POST" action="">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">วันที่</label>
+                <input type="date" id="editDate" name="date" required class="mt-1 block w-full rounded border p-2">
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700">รายละเอียดงาน</label>
+                <input type="text" id="editTitle" name="title" required class="mt-1 block w-full rounded border p-2">
+            </div>
+            
+            <div class="flex justify-between gap-2">
+                <a id="deleteLink" href="#" onclick="return confirm('ยืนยันที่จะลบคิวงานนี้?')" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">ลบงาน</a>
+                
+                <div class="flex gap-2">
+                    <button type="button" onclick="closeModal()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">ยกเลิก</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">บันทึก</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'th',
+            events: '/api/calendar-events/',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,listMonth'
+            },
+            height: 'auto',
+            eventClick: function(info) {
+                // เมื่อคลิกที่งาน ให้เปิด Modal
+                openModal(info.event);
+            }
+        });
+        calendar.render();
+    });
+
+    // ฟังก์ชันเปิด Modal และใส่ข้อมูล
+    function openModal(event) {
+        var modal = document.getElementById('editModal');
+        var form = document.getElementById('editForm');
+        var titleInput = document.getElementById('editTitle');
+        var dateInput = document.getElementById('editDate');
+        var deleteLink = document.getElementById('deleteLink');
+
+        // ใส่ข้อมูลเดิมลงในช่อง
+        titleInput.value = event.title;
+        dateInput.value = event.startStr; // วันที่ในรูปแบบ YYYY-MM-DD
+
+        // กำหนด URL สำหรับ Form แก้ไข และ ปุ่มลบ
+        // ระวัง: ต้องแน่ใจว่า URL Pattern ใน urls.py ตรงกัน
+        form.action = "/dashboard/calendar/edit/" + event.id + "/"; 
+        deleteLink.href = "/dashboard/calendar/delete/" + event.id + "/";
+
+        modal.classList.remove('hidden');
+    }
+
+    // ฟังก์ชันปิด Modal
+    function closeModal() {
+        document.getElementById('editModal').classList.add('hidden');
+    }
+    
+    // ปิด Modal เมื่อคลิกพื้นที่ว่างๆ รอบนอก
+    window.onclick = function(event) {
+        var modal = document.getElementById('editModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+</script>
+{% endblock %}

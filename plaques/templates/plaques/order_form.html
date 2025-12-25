@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+
+{% block title %}
+สั่งทำป้ายหินอ่อนติดธาตุ
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-10 mb-10 p-6">
+
+    <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
+
+        <div class="p-8">
+            <h1 class="text-3xl font-extrabold text-gray-800 text-center mb-8">
+                สั่งทำป้ายหินอ่อนติดธาตุ
+            </h1>
+            <form method="post" enctype="multipart/form-data" class="space-y-8">
+                {% csrf_token %}
+
+                <div>
+                    <h5 class="text-lg font-bold text-gray-800 border-b pb-2 mb-4 flex items-center gap-2">
+                        <span class="bg-blue-100 text-blue-600 w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
+                        ข้อมูลบนป้าย (ผู้วายชนม์)
+                    </h5>
+
+                    <div class="grid grid-cols-1 gap-6">
+                        <div class="w-full">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">รูปถ่ายหน้าตรง (ไฟล์ภาพ)</label>
+
+                            <label for="id_deceased_photo"
+                                class="relative flex flex-col items-center justify-center w-full h-80 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition duration-300 overflow-hidden group">
+
+                                <div id="upload-placeholder" class="flex flex-col items-center justify-center pt-5 pb-6 transition-all duration-300 group-hover:scale-105">
+                                    <svg class="w-12 h-12 mb-4 text-gray-400 group-hover:text-gray-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <p class="mb-2 text-sm font-semibold text-gray-500 group-hover:text-gray-700">คลิกเพื่อเลือกรูป</p>
+                                    <p class="text-xs text-gray-400">รองรับไฟล์ PNG, JPG (สูงสุด 10MB)</p>
+                                </div>
+
+                                <img id="upload-preview" src="#" alt="ตัวอย่างรูป" class="absolute inset-0 w-full h-full object-contain p-2 hidden bg-white">
+
+                                <div class="hidden">
+                                    {{ form.deceased_photo }}
+                                </div>
+                            </label>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ-สกุล ผู้วายชนม์</label>
+                            {{ form.deceased_name }}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">วันเกิด (กรุณาเลือกวันเดือนปีให้ถูกต้อง)</label>
+                            {{ form.birth_date }}
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">วันมรณะ (กรุณาเลือกวันเดือนปีให้ถูกต้อง)</label>
+                            {{ form.death_date }}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h5 class="text-lg font-bold text-gray-800 border-b pb-2 mb-4 flex items-center gap-2">
+                        <span class="bg-blue-100 text-blue-600 w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
+                        รูปแบบและขนาด
+                    </h5>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ลายหินอ่อน</label>
+                            {{ form.stone_style }}
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ขนาดป้าย</label>
+                            {{ form.size }}
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <label for="id_note" class="block text-sm font-medium text-gray-700 mb-1">หมายเหตุถึงร้าน (เพิ่มเติม)</label>
+                        <textarea name="note" id="id_note" rows="3"
+                            class="block w-full p-3 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                            placeholder="เช่น อยากให้ห่อกันกระแทกหนาๆ หรืออื่นๆ"></textarea>
+                    </div>
+                </div>
+
+                <div class="mt-8 mb-6">
+                    <div class="border-t border-gray-200 pt-4 mt-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 font-medium">ยอดชำระ (ยังไม่รวมค่าจัดส่ง):</span>
+                            <div class="text-right">
+                                <span id="total-price-display" class="text-3xl font-extrabold text-blue-600">0</span>
+                                <span class="text-gray-800 font-bold text-lg">บาท</span>
+                            </div>
+                        </div>
+                        <input type="hidden" name="total_price" id="hidden_total_price" value="0">
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl text-lg shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5 flex justify-center items-center gap-2">
+                        <span>ยืนยันการสั่งชื้อ</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // --- 1. จัดการ Dropdown และ ราคา ---
+        const sizeSelect = document.getElementById('id_size');
+        const stoneSelect = document.getElementById('id_stone_style');
+        
+        // 🔥 แก้ไขตัวแปรให้ตรงกับ HTML ใหม่
+        const priceDisplay = document.getElementById('total-price-display'); 
+        const hiddenPriceInput = document.getElementById('hidden_total_price');
+
+        // ฟังก์ชันลบตัวเลือกขีดๆ (-----)
+        function removeDashedOption(selectElement) {
+            if (!selectElement) return;
+            for (let i = 0; i < selectElement.options.length; i++) {
+                if (selectElement.options[i].text.includes('--------')) {
+                    selectElement.remove(i);
+                    break;
+                }
+            }
+        }
+
+        // ฟังก์ชันเพิ่ม Placeholder
+        function addPlaceholderOption(selectElement, placeholderText) {
+            if (!selectElement) return;
+            const option = document.createElement('option');
+            option.text = placeholderText;
+            option.value = "";
+            option.disabled = true;
+            option.selected = true;
+            option.hidden = true;
+            selectElement.insertBefore(option, selectElement.firstChild);
+            selectElement.selectedIndex = 0;
+        }
+
+        // ลบขีดๆ และเพิ่ม Placeholder
+        if (sizeSelect) {
+            removeDashedOption(sizeSelect);
+            addPlaceholderOption(sizeSelect, "-- กรุณาเลือกขนาด --");
+        }
+        if (stoneSelect) {
+            removeDashedOption(stoneSelect);
+            addPlaceholderOption(stoneSelect, "-- เลือกลายหินอ่อน --");
+        }
+
+        // --- ฟังก์ชันคำนวณราคา ---
+        function updatePrice() {
+            if (!sizeSelect) return;
+            const selectedSize = sizeSelect.value;
+            let price = '0'; // เริ่มต้น 0
+
+            if (selectedSize === '15x20') {
+                price = '1,000';
+            } else if (selectedSize === '14x29') {
+                price = '1,700';
+            }
+            
+            // อัปเดตตัวเลขแสดงผล
+            if (priceDisplay) {
+                priceDisplay.textContent = price;
+            }
+
+            // อัปเดตค่า input hidden (เอาลูกน้ำออกเพื่อให้ส่งไป backend เป็นตัวเลขเพียวๆ)
+            if (hiddenPriceInput) {
+                hiddenPriceInput.value = price.replace(/,/g, '');
+            }
+        }
+
+        // Event Listener
+        if (sizeSelect) {
+            sizeSelect.addEventListener('change', updatePrice);
+            updatePrice(); // รันครั้งแรก
+        }
+
+        // --- 2. Preview รูปภาพ ---
+        const photoInput = document.getElementById('id_deceased_photo');
+        const placeholder = document.getElementById('upload-placeholder');
+        const previewImg = document.getElementById('upload-preview');
+
+        if (photoInput) {
+            photoInput.addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImg.src = e.target.result;
+                        previewImg.classList.remove('hidden');
+                        placeholder.classList.add('hidden');
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    previewImg.classList.add('hidden');
+                    placeholder.classList.remove('hidden');
+                    previewImg.src = '#';
+                }
+            });
+        }
+    });
+</script>
+
+<style>
+    /* Styling สำหรับ Django Forms */
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        outline: none;
+        background-color: #f9fafb;
+        color: #111827;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+    }
+
+    input:focus,
+    select:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        background-color: #ffffff;
+    }
+</style>
+{% endblock %}
